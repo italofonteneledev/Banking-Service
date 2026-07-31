@@ -1,4 +1,4 @@
-package service.http;
+package domain.http;
 
 public enum SituacaoCadastral {
     ATIVO,
