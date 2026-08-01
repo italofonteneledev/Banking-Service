@@ -5,6 +5,7 @@ import domain.http.AgenciaHttp;
 import domain.http.SituacaoCadastral;
 import exception.AgenciaNaoAtivaOuNaoEncontradaException;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import repository.AgenciaRepository;
 
@@ -23,6 +24,7 @@ public class AgenciaService {
         this.agenciaRepository = agenciaRepository;
     }
 
+    @Transactional
     public void cadastrar(Agencia agencia) {
         AgenciaHttp agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
 
