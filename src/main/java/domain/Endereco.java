@@ -1,11 +1,21 @@
 package domain;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "tb_address")
 public class Endereco {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String rua;
+
     private String logradouro;
+
     private String complemento;
+
     private Integer numero;
 
     public Integer getId() {

@@ -10,7 +10,7 @@ import service.http.AgenciaService;
 @Path("/agencias")
 public class AgenciaController {
 
-    private AgenciaService agenciaService;
+    private final AgenciaService agenciaService;
 
     public AgenciaController(AgenciaService agenciaService) {
         this.agenciaService = agenciaService;
@@ -24,13 +24,13 @@ public class AgenciaController {
 
     @GET
     @Path("{id}")
-    public RestResponse<Agencia> buscarPorId(Integer id) {
+    public RestResponse<Agencia> buscarPorId(Long id) {
         return RestResponse.ok(this.agenciaService.buscarPorId(id));
     }
 
     @DELETE
     @Path("{id}")
-    public RestResponse<Void> deletar(Integer id) {
+    public RestResponse<Void> deletar(Long id) {
         this.agenciaService.deletar(id);
         return RestResponse.ok();
     }
