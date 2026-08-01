@@ -24,16 +24,16 @@ No Quarkus não existe `@RestControllerAdvice`. O equivalente idiomático são `
 Justificativa: nativo do JAX-RS, sem dependências extras, integra-se ao ciclo RESTEasy Reactive. Alternativa considerada: `@ServerExceptionMapper` (RESTEasy Reactive específico) — mais conciso, menos portável; descartado para manter código comum a qualquer runtime JAX-RS do Quarkus. Reavaliar se surgir vantagem.
 
 ### Decisão 2: `BankingException` abstrata com `toProblemDetail()`
-Mirror do `IBankException` original: classe base abstrata que herda `RuntimeException`, com método `toProblemDetail()` retornando um `ProblemDetailDto` (record próprio, ver Decisão 3). Subclasses sobrescrevem para definir status/título/detalhe. O mapper apenas delega — lógica do erro fica co-locada com a exceção.
+Mirror do `IBankException` original: classe base abstrata que herda `RuntimeException`, com método `toProblemDetail()` retornando um `ProblemDetail` (record próprio, ver Decisão 3). Subclasses sobrescrevem para definir status/título/detalhe. O mapper apenas delega — lógica do erro fica co-locada com a exceção.
 
 Justificativa: mantém o design que o autor já usa (cohesion: cada exceção conhece seu ProblemDetail), apenas trocando o tipo de retorno do Spring por um DTO próprio serializável via Jackson. Alternativa: campos (status, title, detail) na base lidos pelo mapper — mais genérico mas perde o polimorfismo simples; descartado para preservar padrão familiar.
 
-### Decisão 3: Record próprio `ProblemDetailDto` (sem `ProblemDetail` do Spring/JAX-RS)
-O `ProblemDetail` usado no Spring (`org.springframework.http.ProblemDetail`) **não** existe no JAX-RS/Jakarta RESTful — não há equivalente padrão. Logo, criamos um record próprio `ProblemDetailDto`:
+### Decisão 3: Record próprio `ProblemDetail` (sem `ProblemDetail` do Spring/JAX-RS)
+O `ProblemDetail` usado no Spring (`org.springframework.http.ProblemDetail`) **não** existe no JAX-RS/Jakarta RESTful — não há equivalente padrão. Logo, criamos um record próprio `ProblemDetail` (no pacote `exception`):
 - Campos: `uri` (opcional, default `about:blank`), `status` (int), `title` (String), `detail` (String), `type` (default `about:blank`), e `Map<String, Object> properties` para extensões RFC 7807 como `invalid-params`. Serializado direto pelo Jackson (já no projeto via `quarkus-rest-jackson`).
-- `BankingException.toProblemDetail()` retorna `ProblemDetailDto`; os mappers empacotam em `Response` com content-type `application/problem+json`.
+- `BankingException.toProblemDetail()` retorna `ProblemDetail`; os mappers empacotam em `Response` com content-type `application/problem+json`.
 
-`InvalidParamDto(String name, String message)` (renomeei `defaultMessage`→`message` para clareza; no JSON o campo do parâmetro vem como `name` e a descrição como `message`), adicionado à propriedade `invalid-params` do ProblemDetailDto.
+`InvalidParamDto(String name, String message)` (renomeei `defaultMessage`→`message` para clareza; no JSON o campo do parâmetro vem como `name` e a descrição como `message`), adicionado à propriedade `invalid-params` do ProblemDetail.
 
 ### Decisão 4: Status 422 para validação (decisão do usuário)
 Confirmado pelo usuário: usar 422 Unprocessable Entity (não 420 custom do Spring original, não 400). A escolha reflete semântica REST para payload bem-formado semanticamente inválido.

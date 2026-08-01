@@ -27,7 +27,7 @@ public class AgenciaService {
     @Transactional
     public void cadastrar(Agencia agencia) {
         AgenciaHttp agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
-        if (agenciaHttp != null && agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada");
+        if (agenciaHttp != null && agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada ou ativa");
 
         agenciaRepository.persist(agencia);
     }

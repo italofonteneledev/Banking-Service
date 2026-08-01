@@ -22,5 +22,5 @@ A aplicação não tem um tratamento de erros centralizado. A exceção existent
 
 - **Código**: novo pacote `exception` já existente; adicionar `BankingException`, `GlobalExceptionMapper` (ou mappers individuais), `InvalidParamDto`. Refatorar `AgenciaNaoAtivaOuNaoEncontradaException`.
 - **APIs**: respostas de erro agora seguem RFC 7807 (`application/problem+json`). Controllers que lançam exceções de negócio passam a responder com status estruturado em vez de 500.
-- **Dependências**: nenhuma nova — JAX-RS / RESTEasy Reactive e Jackson já estão no projeto via `quarkus-rest-jackson`.
+- **Dependências**: adicionada `quarkus-hibernate-validator` para habilitar Bean Validation (`@Valid` / `ConstraintViolationException`) consumida pelo `ConstraintViolationExceptionMapper` e pelos testes. JAX-RS / RESTEasy Reactive e Jackson já estavam no projeto via `quarkus-rest-jackson`.
 - **Testes**: adicionar testes cobrindo o mapper de `BankingException`, o mapper de validação (422) e a refatoração da exceção existente (404).
