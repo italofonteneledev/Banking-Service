@@ -1,4 +1,4 @@
-package service.http;
+package service;
 
 import domain.Agencia;
 import domain.http.AgenciaHttp;
@@ -8,9 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import repository.AgenciaRepository;
-
-import java.util.ArrayList;
-import java.util.List;
+import service.http.SituacaoCadastralHttpService;
 
 @ApplicationScoped
 public class AgenciaService {

@@ -8,7 +8,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @Path("/situacao-cadastral")
 @RegisterRestClient(configKey = "situacao-cadastral-api")
-interface SituacaoCadastralHttpService {
+public interface SituacaoCadastralHttpService {
 
     @GET
     @Path("{cnpj}")
