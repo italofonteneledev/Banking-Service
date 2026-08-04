@@ -21,6 +21,17 @@ public class Agencia {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
+    public Agencia() {
+    }
+
+    public Agencia(Integer id, String nome, String razaoSocial, String cnpj, Endereco endereco) {
+        this.id = id;
+        this.nome = nome;
+        this.razaoSocial = razaoSocial;
+        this.cnpj = cnpj;
+        this.endereco = endereco;
+    }
+
     public Integer getId() {
         return id;
     }

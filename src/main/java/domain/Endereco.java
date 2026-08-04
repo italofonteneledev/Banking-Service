@@ -18,6 +18,17 @@ public class Endereco {
 
     private Integer numero;
 
+    public Endereco() {
+    }
+
+    public Endereco(Integer id, String rua, String logradouro, String complemento, Integer numero) {
+        this.id = id;
+        this.rua = rua;
+        this.logradouro = logradouro;
+        this.complemento = complemento;
+        this.numero = numero;
+    }
+
     public Integer getId() {
         return id;
     }
