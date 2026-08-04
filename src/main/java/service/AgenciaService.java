@@ -4,6 +4,7 @@ import domain.Agencia;
 import domain.http.AgenciaHttp;
 import domain.http.SituacaoCadastral;
 import exception.AgenciaNaoAtivaOuNaoEncontradaException;
+import exception.AgencyNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -31,7 +32,7 @@ public class AgenciaService {
     }
 
     public Agencia buscarPorId(Long id) {
-        return agenciaRepository.findById(id);
+        return agenciaRepository.findByIdOptional(id).orElseThrow(() -> new AgencyNotFoundException("Agency not found"));
     }
 
     public void deletar(Long id) {
