@@ -5,6 +5,7 @@ import domain.http.AgenciaHttp;
 import domain.http.SituacaoCadastral;
 import exception.AgenciaNaoAtivaOuNaoEncontradaException;
 import exception.AgencyNotFoundException;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -19,14 +20,22 @@ public class AgenciaService {
 
     private final AgenciaRepository agenciaRepository;
 
-    public AgenciaService(AgenciaRepository agenciaRepository) {
+    private final MeterRegistry meterRegistry;
+
+    public AgenciaService(AgenciaRepository agenciaRepository, MeterRegistry meterRegistry) {
         this.agenciaRepository = agenciaRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     @Transactional
     public void cadastrar(Agencia agencia) {
         AgenciaHttp agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
-        if (agenciaHttp != null && agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada ou ativa");
+        if (agenciaHttp != null && agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) {
+            meterRegistry.counter("agencia_nao_adicionada_counter").increment();
+            throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada ou ativa");
+        }
+
+        meterRegistry.counter("agencia_adicionada_counter").increment();
 
         agenciaRepository.persist(agencia);
     }
