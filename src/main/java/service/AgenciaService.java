@@ -30,9 +30,9 @@ public class AgenciaService {
     @Transactional
     public void cadastrar(Agencia agencia) {
         AgenciaHttp agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
-        if (agenciaHttp != null && agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) {
+        if (agenciaHttp == null || agenciaHttp.getSituacaoCadastral().equals(SituacaoCadastral.INATIVO)) {
             meterRegistry.counter("agencia_nao_adicionada_counter").increment();
-            throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada ou ativa");
+            throw new AgenciaNaoAtivaOuNaoEncontradaException("Agencia não encontrada ou inativa");
         }
 
         meterRegistry.counter("agencia_adicionada_counter").increment();

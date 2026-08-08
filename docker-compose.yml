@@ -3,7 +3,8 @@ services:
     image: ital02/banking-service:v2
     container_name: banking-service-container
     environment:
-      - SITUACAO_CADASTRAL_API_URL=https://situacao-cadastral.free.beeceptor.com
+      - QUARKUS_CLIENT_HTTP=host.docker.internal
+      - QUARKUS_CLIENT_HTTP_PORT=8181
       - QUARKUS_DATASOURCE_USERNAME=user
       - QUARKUS_DATASOURCE_PASSWORD=12345
       - QUARKUS_DATASOURCE_HOST=postgres-banking-service
