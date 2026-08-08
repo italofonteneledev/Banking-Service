@@ -3,27 +3,29 @@ services:
     image: joao0212/banking-validation:v2
     container_name: banking-validation-container
     environment:
-      - QUARKUS_DATASOURCE_USERNAME=joao
-      - QUARKUS_DATASOURCE_PASSWORD=joao
-      - QUARKUS_DATASOURCE_HOST=postgres-db-alura
+      - QUARKUS_DATASOURCE_USERNAME=user
+      - QUARKUS_DATASOURCE_PASSWORD=12345
+      - QUARKUS_DATASOURCE_HOST=postgres-banking-validation
       - QUARKUS_DATASOURCE_PORT=5432
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres-banking-validation:5432/agencia_validation
     ports:
       - 8181:8181
     depends_on:
-      - postgres-db-alura
+      - postgres-banking-validation
 
-  postgres-db-alura:
-    image: postgres:14
-    container_name: postgres-db-alura-container
+  postgres-banking-validation:
+    image: postgres:18-alpine
+    container_name: postgres-banking-validation-container
     environment:
-      - POSTGRES_USER=joao
-      - POSTGRES_PASSWORD=joao
-      - POSTGRES_DB=agencia
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: agencia_validation
     ports:
-      - 5432:5432
+      - "5434:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql
 
 volumes:
-  postgres_data:
+  postgres-data:
     driver: local
