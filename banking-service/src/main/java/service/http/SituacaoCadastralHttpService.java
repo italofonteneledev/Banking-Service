@@ -1,6 +1,7 @@
 package service.http;
 
 import domain.http.AgenciaHttp;
+import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -12,6 +13,6 @@ public interface SituacaoCadastralHttpService {
 
     @GET
     @Path("{cnpj}")
-    AgenciaHttp buscarPorCnpj(@PathParam("cnpj") String cnpj);
+    Uni<AgenciaHttp> buscarPorCnpj(@PathParam("cnpj") String cnpj);
 
 }
