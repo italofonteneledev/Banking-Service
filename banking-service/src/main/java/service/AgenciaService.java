@@ -6,6 +6,7 @@ import domain.http.SituacaoCadastral;
 import exception.AgenciaNaoAtivaOuNaoEncontradaException;
 import exception.AgencyNotFoundException;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -37,16 +38,19 @@ public class AgenciaService {
                 .onItem().transformToUni(item -> persistirSeAtiva(agencia, item));
     }
 
-    public Agencia buscarPorId(Long id) {
-        return agenciaRepository.findByIdOptional(id).orElseThrow(() -> new AgencyNotFoundException("Agency not found"));
+    @WithSession
+    public Uni<Agencia> buscarPorId(Long id) {
+        return agenciaRepository.findById(id);
     }
 
-    public void deletar(Long id) {
-        agenciaRepository.deleteById(id);
+    @WithTransaction
+    public Uni<Void> deletar(Long id) {
+        return agenciaRepository.deleteById(id).replaceWithVoid();
     }
 
-    public void alterar(Agencia agencia) {
-        agenciaRepository.update("nome = ?1, razaoSocial = ?2, cnpj = ?3 = where id = ?4", agencia.getNome(), agencia.getRazaoSocial(), agencia.getCnpj(), agencia.getId());
+    @WithTransaction
+    public Uni<Void> alterar(Agencia agencia) {
+        return agenciaRepository.update("nome = ?1, razaoSocial = ?2, cnpj = ?3 = where id = ?4", agencia.getNome(), agencia.getRazaoSocial(), agencia.getCnpj(), agencia.getId()).replaceWithVoid();
     }
 
     private Uni<Void> persistirSeAtiva(Agencia agencia, AgenciaHttp agenciaHttp) {
