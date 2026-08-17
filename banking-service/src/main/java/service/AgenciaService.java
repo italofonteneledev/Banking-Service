@@ -11,6 +11,7 @@ import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import repository.AgenciaRepository;
 import service.http.SituacaoCadastralHttpService;
@@ -31,6 +32,12 @@ public class AgenciaService {
     }
 
     @WithTransaction
+    @CircuitBreaker(
+            requestVolumeThreshold = 5,
+            failureRatio = 0.5,
+            delay = 2000,
+            successThreshold = 2
+    )
     public Uni<Void> cadastrar(Agencia agencia) {
         Uni<AgenciaHttp> agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
         return agenciaHttp
