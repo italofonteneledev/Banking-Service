@@ -8,10 +8,12 @@ import exception.AgencyNotFoundException;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
+import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import repository.AgenciaRepository;
 import service.http.SituacaoCadastralHttpService;
@@ -38,6 +40,7 @@ public class AgenciaService {
             delay = 2000,
             successThreshold = 2
     )
+    @Fallback(fallbackMethod = "chamarFallBack")
     public Uni<Void> cadastrar(Agencia agencia) {
         Uni<AgenciaHttp> agenciaHttp = situacaoCadastralHttpService.buscarPorCnpj(agencia.getCnpj());
         return agenciaHttp
@@ -71,4 +74,8 @@ public class AgenciaService {
         return agenciaRepository.persist(agencia).replaceWithVoid();
     }
 
+    public Uni<Void> chamarFallBack(Agencia agencia) {
+        Log.info("A agência com CNPJ: " + agencia.getCnpj() + "não foi adicionada pois houve um erro");
+        return Uni.createFrom().nullItem();
+    }
 }
