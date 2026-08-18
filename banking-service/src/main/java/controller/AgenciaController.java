@@ -2,6 +2,7 @@ package controller;
 
 import domain.Agencia;
 import io.smallrye.common.annotation.NonBlocking;
+import io.smallrye.faulttolerance.api.RateLimit;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -25,6 +26,7 @@ public class AgenciaController {
     }
 
     @GET
+    @RateLimit(value = 5, window = 10)
     @Path("{id}")
     public Uni<RestResponse<Agencia>> buscarPorId(Long id) {
         return this.agenciaService.buscarPorId(id).onItem().transform(agencia -> RestResponse.ok(agencia));
